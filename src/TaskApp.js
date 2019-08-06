@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import useTaskState from "./hooks/useTaskState";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import AppBar from "@material-ui/core/AppBar";
@@ -6,40 +7,17 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Grid from "@material-ui/core/Grid";
 import TaskList from "./TaskList";
 import TaskForm from "./TaskForm";
-import uuid from "uuid/v4";
 
 function Tasks() {
   const initialTasks = JSON.parse(window.localStorage.getItem("tasks") || "[]");
 
-  const [tasks, setTasks] = useState(initialTasks);
+  const { tasks, editTask, removeTask, addTask, toggleComplete } = useTaskState(
+    initialTasks
+  );
 
   useEffect(() => {
     window.localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
-
-  const addTask = newTaskText => {
-    if (newTaskText.length)
-      setTasks([...tasks, { id: uuid(), task: newTaskText, completed: false }]);
-  };
-
-  const removeTask = taskId => {
-    const updatedTasks = tasks.filter(task => task.id !== taskId);
-    setTasks(updatedTasks);
-  };
-
-  const editTask = (taskId, newTask) => {
-    const updatedTasks = tasks.map(task =>
-      task.id === taskId ? { ...task, task: newTask } : task
-    );
-    setTasks(updatedTasks);
-  };
-
-  const toggleComplete = taskId => {
-    const updatedTasks = tasks.map(task =>
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    );
-    setTasks(updatedTasks);
-  };
 
   return (
     <Paper
